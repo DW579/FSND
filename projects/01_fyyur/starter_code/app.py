@@ -32,7 +32,7 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-class Venue(db.Model):
+class Venue(db.Model): # Done
     __tablename__ = 'venue'
 
     venue_id = db.Column(db.Integer, primary_key=True)
@@ -94,7 +94,7 @@ def index():
 #  Venues
 #  ----------------------------------------------------------------
 
-@app.route('/venues')
+@app.route('/venues') # Done
 def venues():
   # TODO: replace with real venues data. (Done)
   #       num_shows should be aggregated based on number of upcoming shows per venue.
@@ -142,9 +142,9 @@ def venues():
   # Send the data array data to the venues.html page
   return render_template('pages/venues.html', areas=data)
 
-@app.route('/venues/search', methods=['POST'])
+@app.route('/venues/search', methods=['POST']) # Done
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+  # TODO: implement search on venues with partial string search. Ensure it is case-insensitive. (Done)
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
 
@@ -176,7 +176,7 @@ def search_venues():
 
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
-@app.route('/venues/<int:venue_id>')
+@app.route('/venues/<int:venue_id>') # Almost Done
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
@@ -208,7 +208,7 @@ def show_venue(venue_id):
 #  Create Venue
 #  ----------------------------------------------------------------
 
-@app.route('/venues/create', methods=['GET'])
+@app.route('/venues/create', methods=['GET']) # Nothing to do
 def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
