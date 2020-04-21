@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 # Implementation of flask_migrate
 migrate = Migrate(app, db)
 
-# TODO: connect to a local postgresql database
+# TODO: connect to a local postgresql database (Done)
 # Connected to local db 'fyyur' through config.py file
 
 #----------------------------------------------------------------------------#
@@ -33,23 +33,29 @@ migrate = Migrate(app, db)
 #----------------------------------------------------------------------------#
 
 class Venue(db.Model):
-    __tablename__ = 'Venue'
+    __tablename__ = 'venue'
 
-    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    address = db.Column(db.String(120))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
+    website = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
+    seeking_venue = db.Column(db.Boolean, default=False)
+    seeking_description = db.Column(db.String(500))
+    image_link = db.Column(db.String(500))
+    past_shows_count = db.Column(db.Integer, default=0)
+    upcoming_shows_count = db.Column(db.Integer, default=0)
+    
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artist'
 
-    id = db.Column(db.Integer, primary_key=True)
+    artist_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
@@ -209,7 +215,7 @@ def show_venue(venue_id):
       "start_time": "2035-04-15T20:00:00.000Z"
     }],
     "past_shows_count": 1,
-    "upcoming_shows_count": 1,
+    "upcoming_shows_count": 3,
   }
   data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=data)
