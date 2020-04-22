@@ -72,6 +72,12 @@ class Artist(db.Model): # Done
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
+class Genres(db.Model):
+    __tablename__ = 'genres'
+
+    genre_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -90,7 +96,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 # Controllers.
 #----------------------------------------------------------------------------#
 
-@app.route('/')
+@app.route('/') # Nothing to do
 def index():
   return render_template('pages/home.html')
 
@@ -379,7 +385,7 @@ def edit_venue_submission(venue_id):
 #  Create Artist
 #  ----------------------------------------------------------------
 
-@app.route('/artists/create', methods=['GET'])
+@app.route('/artists/create', methods=['GET']) # Nothing to do
 def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
@@ -443,7 +449,7 @@ def shows():
   }]
   return render_template('pages/shows.html', shows=data)
 
-@app.route('/shows/create')
+@app.route('/shows/create') # Nothing to do
 def create_shows():
   # renders form. do not touch.
   form = ShowForm()
@@ -461,11 +467,11 @@ def create_show_submission():
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
 
-@app.errorhandler(404)
+@app.errorhandler(404) # Nothing to do
 def not_found_error(error):
     return render_template('errors/404.html'), 404
 
-@app.errorhandler(500)
+@app.errorhandler(500) # Nothing to do
 def server_error(error):
     return render_template('errors/500.html'), 500
 
