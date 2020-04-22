@@ -265,14 +265,33 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+
+  # Grab user search term from the form POST
+  search_term = request.form.get('search_term', None)
+  # Query all rows in artist table
+  artist_data = Artist.query.all()
+  # Inilized response data for user search
+  response = {
+    "count": 0,
+    "data": []
   }
+
+  # Loop through all the artists in artist table
+  for artist in artist_data:
+
+    # If user search term is a substring within the artist name
+    if search_term.lower() in artist.name.lower():
+      # Increment by 1 the response count
+      response["count"] += 1
+      # Object to append to response data
+      match_artist = {
+        "id": artist.artist_id,
+        "name": artist.name,
+        "num_upcoming_shows": artist.upcoming_shows_count
+      }
+
+      response["data"].append(match_artist)
+
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
