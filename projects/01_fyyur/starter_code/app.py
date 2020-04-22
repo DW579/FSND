@@ -78,6 +78,13 @@ class Genres(db.Model): # Done
     genre_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
+class VenueGenres(db.Model):
+    __tablename__ = 'venue_genres'
+
+    venue_genre_id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, default=0)
+    genre_id = db.Column(db.Integer, default=0)
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
