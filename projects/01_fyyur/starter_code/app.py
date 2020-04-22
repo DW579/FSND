@@ -52,7 +52,7 @@ class Venue(db.Model): # Done
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate (Done)
 
-class Artist(db.Model):
+class Artist(db.Model): # Done
     __tablename__ = 'artist'
 
     artist_id = db.Column(db.Integer, primary_key=True)
@@ -67,9 +67,8 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     past_shows_count = db.Column(db.Integer, default=0)
     upcoming_shows_count = db.Column(db.Integer, default=0)
-    
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # TODO: implement any missing fields, as a database migration using Flask-Migrate (Done)
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
@@ -241,19 +240,24 @@ def delete_venue(venue_id):
 
 #  Artists
 #  ----------------------------------------------------------------
-@app.route('/artists')
+@app.route('/artists') # Done
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+
+  # Query all artists in artist table in db
+  all_artist_data = Artist.query.all()
+  # Declare data array to hold artist data to be forwarded to pages/artists.html
+  data = []
+
+  # Loop through all artist and build objects of their data to be appened into data array
+  for artist in all_artist_data:
+    artist_data = {
+      "id": artist.artist_id,
+      "name": artist.name
+    }
+
+    data.append(artist_data)
+
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -276,7 +280,7 @@ def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
   data1={
-    "id": 4,
+    "id": 1,
     "name": "Guns N Petals",
     "genres": ["Rock n Roll"],
     "city": "San Francisco",
@@ -298,7 +302,7 @@ def show_artist(artist_id):
     "upcoming_shows_count": 0,
   }
   data2={
-    "id": 5,
+    "id": 2,
     "name": "Matt Quevedo",
     "genres": ["Jazz"],
     "city": "New York",
@@ -318,7 +322,7 @@ def show_artist(artist_id):
     "upcoming_shows_count": 0,
   }
   data3={
-    "id": 6,
+    "id": 3,
     "name": "The Wild Sax Band",
     "genres": ["Jazz", "Classical"],
     "city": "San Francisco",
