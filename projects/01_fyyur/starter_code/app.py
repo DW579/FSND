@@ -78,7 +78,7 @@ class Genres(db.Model): # Done
     genre_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-class VenueGenres(db.Model):
+class VenueGenres(db.Model): # Done
     __tablename__ = 'venue_genres'
 
     venue_genre_id = db.Column(db.Integer, primary_key=True)
@@ -200,6 +200,8 @@ def show_venue(venue_id):
 
   # Query for specific venue's data by ID
   venue_data = Venue.query.get(venue_id)
+  # Query for all venue genres
+  venue_genres = VenueGenres.query.all()
 
   data = {
     "id": venue_id,
@@ -219,6 +221,12 @@ def show_venue(venue_id):
     "past_shows_count": venue_data.past_shows_count,
     "upcoming_shows_count": venue_data.upcoming_shows_count
   }
+
+  # Add venue genres to data['genres']
+  for venue_genre in venue_genres:
+
+    if venue_genre.venue_id == venue_id:
+      data['genres'].append(Genres.query.get(venue_genre.genre_id).name)
 
   return render_template('pages/show_venue.html', venue=data)
 
