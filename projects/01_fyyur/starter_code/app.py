@@ -72,7 +72,7 @@ class Artist(db.Model): # Done
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
-class Genres(db.Model):
+class Genres(db.Model): # Done
     __tablename__ = 'genres'
 
     genre_id = db.Column(db.Integer, primary_key=True)
