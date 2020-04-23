@@ -368,7 +368,7 @@ def search_artists():
 
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
-@app.route('/artists/<int:artist_id>') # Almost Done
+@app.route('/artists/<int:artist_id>') # Done
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
@@ -379,6 +379,8 @@ def show_artist(artist_id):
   artist_genres = ArtistGenres.query.all()
   # Query for all past shows
   past_shows = PastShows.query.all()
+  # Query for all upcoming shows
+  upcoming_shows = UpcomingShows.query.all()
 
   data = {
     "id": artist_id,
@@ -416,6 +418,19 @@ def show_artist(artist_id):
       }
 
       data['past_shows'].append(past_show_venue)
+
+  # Add upcoming shows to data['upcoming_shows']
+  for upcoming_show in upcoming_shows:
+    
+    if upcoming_show.artist_id == artist_id:
+      upcoming_show_venue = {
+        "venue_id": upcoming_show.venue_id,
+        "venue_name": Venue.query.get(upcoming_show.venue_id).name,
+        "venue_image_link": Venue.query.get(upcoming_show.venue_id).image_link,
+        "start_time": upcoming_show.start_time
+      }
+
+      data['upcoming_shows'].append(upcoming_show_venue)
 
   return render_template('pages/show_artist.html', artist=data)
 
