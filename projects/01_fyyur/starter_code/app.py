@@ -85,7 +85,7 @@ class VenueGenres(db.Model): # Done
     venue_id = db.Column(db.Integer, default=0)
     genre_id = db.Column(db.Integer, default=0)
 
-class PastShows(db.Model):
+class PastShows(db.Model): # Done
     __tablename__ = 'past_shows'
 
     past_show_id = db.Column(db.Integer, primary_key=True)
