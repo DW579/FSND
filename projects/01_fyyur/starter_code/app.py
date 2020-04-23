@@ -375,6 +375,8 @@ def show_artist(artist_id):
   
   # Query for specific artist's data by ID
   artist_data = Artist.query.get(artist_id)
+  # Query for all artist genres
+  artist_genres = ArtistGenres.query.all()
 
   data = {
     "id": artist_id,
@@ -393,6 +395,12 @@ def show_artist(artist_id):
     "past_shows_count": artist_data.past_shows_count,
     "upcoming_shows_count": artist_data.upcoming_shows_count
   }
+
+  # Add artist genres to data['genres']
+  for artist_genre in artist_genres:
+
+    if artist_genre.artist_id == artist_id:
+      data['genres'].append(Genres.query.get(artist_genre.genre_id).name)
 
   return render_template('pages/show_artist.html', artist=data)
 
