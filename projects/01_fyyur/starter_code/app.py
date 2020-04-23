@@ -210,6 +210,8 @@ def show_venue(venue_id):
   venue_data = Venue.query.get(venue_id)
   # Query for all venue genres
   venue_genres = VenueGenres.query.all()
+  # Query for all past shows
+  past_shows = PastShows.query.all()
 
   data = {
     "id": venue_id,
@@ -235,6 +237,19 @@ def show_venue(venue_id):
 
     if venue_genre.venue_id == venue_id:
       data['genres'].append(Genres.query.get(venue_genre.genre_id).name)
+
+  # Add past shows to data['past_shows']
+  for past_show in past_shows:
+
+    if past_show.venue_id == venue_id:
+      past_show_artist = {
+        "artist_id": past_show.artist_id,
+        "artist_name": Artist.query.get(past_show.artist_id).name,
+        "artist_image_link": Artist.query.get(past_show.artist_id).image_link,
+        "start_time": past_show.start_time
+      }
+
+      data['past_shows'].append(past_show_artist)
 
   return render_template('pages/show_venue.html', venue=data)
 
