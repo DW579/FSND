@@ -93,6 +93,14 @@ class PastShows(db.Model): # Done
     artist_id = db.Column(db.Integer, default=0)
     start_time = db.Column(db.String(120))
 
+class UpcomingShows(db.Model): # Done
+    __tablename__ = 'upcoming_shows'
+
+    upcoming_show_id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, default=0)
+    artist_id = db.Column(db.Integer, default=0)
+    start_time = db.Column(db.String(120))
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -250,6 +258,9 @@ def show_venue(venue_id):
       }
 
       data['past_shows'].append(past_show_artist)
+
+  # Add upcoming shows to data['upcoming_shows']
+
 
   return render_template('pages/show_venue.html', venue=data)
 
