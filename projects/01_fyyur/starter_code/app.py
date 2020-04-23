@@ -85,6 +85,14 @@ class VenueGenres(db.Model): # Done
     venue_id = db.Column(db.Integer, default=0)
     genre_id = db.Column(db.Integer, default=0)
 
+class PastShows(db.Model):
+    __tablename__ = 'past_shows'
+
+    past_show_id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, default=0)
+    artist_id = db.Column(db.Integer, default=0)
+    start_time = db.Column(db.String(120))
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
