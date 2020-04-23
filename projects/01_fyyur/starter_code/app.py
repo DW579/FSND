@@ -85,6 +85,13 @@ class VenueGenres(db.Model): # Done
     venue_id = db.Column(db.Integer, default=0)
     genre_id = db.Column(db.Integer, default=0)
 
+class ArtistGenres(db.Model): # Done
+    __tablename__ = 'artist_genres'
+
+    artist_genre_id = db.Column(db.Integer, primary_key=True)
+    artist_id = db.Column(db.Integer, default=0)
+    genre_id = db.Column(db.Integer, default=0)
+
 class PastShows(db.Model): # Done
     __tablename__ = 'past_shows'
 
@@ -209,7 +216,7 @@ def search_venues():
 
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
-@app.route('/venues/<int:venue_id>') # Almost Done
+@app.route('/venues/<int:venue_id>') # Done
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
