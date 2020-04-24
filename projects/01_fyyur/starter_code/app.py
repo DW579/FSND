@@ -167,7 +167,6 @@ def venues():
       venue_data = {
         "id": venue.venue_id,
         "name": venue.name,
-        "num_upcoming_shows": venue.upcoming_shows_count
       }
 
       data[data_map[location]]["venues"].append(venue_data)
@@ -182,7 +181,6 @@ def venues():
         "venues": [{
           "id": venue.venue_id,
           "name": venue.name,
-          "num_upcoming_shows": venue.upcoming_shows_count
         }]
       }
 
