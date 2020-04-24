@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+from datetime import datetime
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -108,11 +109,19 @@ class UpcomingShows(db.Model): # Done
     artist_id = db.Column(db.Integer, default=0)
     start_time = db.Column(db.String(120))
 
+class Shows(db.Model): # Done
+    __tablename__ = 'shows'
+
+    show_id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, default=0)
+    artist_id = db.Column(db.Integer, default=0)
+    start_time = db.Column(db.String(120))
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
 
-def format_datetime(value, format='medium'):
+def format_datetime(value, format='medium'): # Nothing to do
   date = dateutil.parser.parse(value)
   if format == 'full':
       format="EEEE MMMM, d, y 'at' h:mma"
@@ -517,13 +526,15 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
+  x = datetime.now()
+  print(x)
   data=[{
     "venue_id": 1,
     "venue_name": "The Musical Hop",
     "artist_id": 4,
     "artist_name": "Guns N Petals",
     "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-    "start_time": "2019-05-21T21:30:00.000Z"
+    "start_time": "2019-05-21 21:30:00.000000"
   }, {
     "venue_id": 3,
     "venue_name": "Park Square Live Music & Coffee",
