@@ -356,8 +356,7 @@ def search_artists():
       # Object to append to response data
       match_artist = {
         "id": artist.artist_id,
-        "name": artist.name,
-        "num_upcoming_shows": artist.upcoming_shows_count
+        "name": artist.name
       }
 
       response["data"].append(match_artist)
