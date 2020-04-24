@@ -166,7 +166,7 @@ def venues():
     if location in data_map:
       venue_data = {
         "id": venue.venue_id,
-        "name": venue.name,
+        "name": venue.name
       }
 
       data[data_map[location]]["venues"].append(venue_data)
@@ -215,8 +215,7 @@ def search_venues():
       # Object to append to response data
       match_venue = {
         "id": venue.venue_id,
-        "name": venue.name,
-        "num_upcoming_shows": venue.upcoming_shows_count
+        "name": venue.name
       }
 
       response["data"].append(match_venue)
