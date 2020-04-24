@@ -231,10 +231,8 @@ def show_venue(venue_id):
   venue_data = Venue.query.get(venue_id)
   # Query for all venue genres
   venue_genres = VenueGenres.query.all()
-  # Query for all past shows
-  past_shows = PastShows.query.all()
-  # Query for all upcoming shows
-  upcoming_shows = UpcomingShows.query.all()
+  # Query all shows per venue_id
+  venue_shows = Shows.query.filter(Shows.venue_id == venue_id)
 
   data = {
     "id": venue_id,
@@ -251,8 +249,8 @@ def show_venue(venue_id):
     "image_link": venue_data.image_link,
     "past_shows": [],
     "upcoming_shows": [],
-    "past_shows_count": venue_data.past_shows_count,
-    "upcoming_shows_count": venue_data.upcoming_shows_count
+    "past_shows_count": 0,
+    "upcoming_shows_count": 0
   }
 
   # Add venue genres to data['genres']
@@ -261,31 +259,23 @@ def show_venue(venue_id):
     if venue_genre.venue_id == venue_id:
       data['genres'].append(Genres.query.get(venue_genre.genre_id).name)
 
-  # Add past shows to data['past_shows']
-  for past_show in past_shows:
-
-    if past_show.venue_id == venue_id:
-      past_show_artist = {
-        "artist_id": past_show.artist_id,
-        "artist_name": Artist.query.get(past_show.artist_id).name,
-        "artist_image_link": Artist.query.get(past_show.artist_id).image_link,
-        "start_time": past_show.start_time
+  # Add shows to data['past_shows'] and data['upcoming_shows']. Keep track of show counts
+  for show in venue_shows:
+    show_time = datetime.strptime(show.start_time, "%Y-%m-%d %H:%M:%S.%f")
+    current_time = datetime.now()
+    show = {
+        "artist_id": show.artist_id,
+        "artist_name": Artist.query.get(show.artist_id).name,
+        "artist_image_link": Artist.query.get(show.artist_id).image_link,
+        "start_time": show.start_time
       }
 
-      data['past_shows'].append(past_show_artist)
-
-  # Add upcoming shows to data['upcoming_shows']
-  for upcoming_show in upcoming_shows:
-    
-    if upcoming_show.venue_id == venue_id:
-      upcoming_show_artist = {
-        "artist_id": upcoming_show.artist_id,
-        "artist_name": Artist.query.get(upcoming_show.artist_id).name,
-        "artist_image_link": Artist.query.get(upcoming_show.artist_id).image_link,
-        "start_time": upcoming_show.start_time
-      }
-
-      data['upcoming_shows'].append(upcoming_show_artist)
+    if show_time <= current_time:
+      data["past_shows_count"] += 1
+      data["past_shows"].append(show)
+    else:
+      data["upcoming_shows_count"] += 1
+      data["upcoming_shows"].append(show)
 
   return render_template('pages/show_venue.html', venue=data)
 
