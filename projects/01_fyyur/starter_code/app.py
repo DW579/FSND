@@ -301,13 +301,13 @@ def create_venue_submission():
       # new_venue_genre = VenueGenres(venue_id = new_venue_id.venue_id, genres_id = )
 
     # on successful db insert, flash success
-    flash('Venue ' + form_data.name.data + ' was successfully listed!')
+    flash('Venue "' + form_data.name.data + '" was successfully listed!')
   except:
     error = True
 
     db.session.rollback()
 
-    flash('An error occurred. Venue ' + form_data.name.data + ' could not be listed.')
+    flash('An error occurred. Venue "' + form_data.name.data + '" could not be listed.')
   finally:
     db.session.close()
 
@@ -327,9 +327,19 @@ def delete_venue(venue_id):
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
 
-  print("Delete button pushed")
-  print(venue_id)
-  flash('Deleted venue at id ' + str(venue_id) + '!')
+  try:
+    venue_name = Venue.query.get(venue_id).name
+
+    Venue.query.filter_by(venue_id = venue_id).delete()
+    db.session.commit()
+
+    flash('Deleted venue "' + venue_name + '"!')
+  except:
+    db.session.rollback()
+    flash('Error when deleting')
+  finally:
+    db.session.close()
+  
   return venue_id
 
 #  Artists

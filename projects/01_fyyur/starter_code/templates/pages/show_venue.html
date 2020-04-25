@@ -74,16 +74,10 @@
 		{% endfor %}
 	</div>
 </section>
-<!-- <form action="{{url_for('venues', id = venue.id)}}" method="post">
-	<input type="hidden" name="_method" value="DELETE">
-	<input type="submit" value="Delete Venue" class="btn btn-danger btn-lg btn-block">
-</form> -->
 <button type="button" onclick="deleteVenue({{venue.id}})" class="btn btn-danger btn-lg btn-block">Delete Venue</button>
 
 <script>
 	function deleteVenue(venue_id) {
-		console.log("Delete html button pushed")
-		console.log(venue_id)
 		fetch('/venues/' + venue_id, {
             method: 'DELETE'
         })
