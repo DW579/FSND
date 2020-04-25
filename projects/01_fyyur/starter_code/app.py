@@ -276,7 +276,6 @@ def create_venue_submission():
   # Query all genres
   all_genres = Genres.query.all()
   genres_map = {}
-  error = False
 
   # Map to know the id of each genre. Find SQLAlchemy way to do this
   for i in range(0, len(all_genres)):
@@ -313,15 +312,12 @@ def create_venue_submission():
     # on successful db insert, flash success
     flash('Venue "' + form_data.name.data + '" was successfully listed!')
   except:
-    error = True
-
+    # Rollback any inserts if an error occurs
     db.session.rollback()
 
     flash('An error occurred. Venue "' + form_data.name.data + '" could not be listed.')
   finally:
     db.session.close()
-
-  # When creating a new Venue, update venue table then grab new venue_id and update the venue_genres table
 
 
   # TODO: on unsuccessful db insert, flash an error instead.
@@ -341,6 +337,7 @@ def delete_venue(venue_id):
     venue_name = Venue.query.get(venue_id).name
 
     Venue.query.filter_by(venue_id = venue_id).delete()
+    VenueGenres.query.filter_by(venue_id = venue_id).delete()
     db.session.commit()
 
     flash('Deleted venue "' + venue_name + '"!')
