@@ -47,8 +47,6 @@ class Venue(db.Model): # Done
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500))
     image_link = db.Column(db.String(500))
-    past_shows_count = db.Column(db.Integer, default=0)
-    upcoming_shows_count = db.Column(db.Integer, default=0)
     
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate (Done)
@@ -66,8 +64,6 @@ class Artist(db.Model): # Done
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500))
     image_link = db.Column(db.String(500))
-    past_shows_count = db.Column(db.Integer, default=0)
-    upcoming_shows_count = db.Column(db.Integer, default=0)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate (Done)
 
@@ -275,9 +271,49 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
+  form_data = VenueForm(request.form)
+  venue_genres = form_data.genres.data
+  error = False
+  
+  try:
+    # Create new_venue varible to be added to the venue table in db
+    new_venue = Venue(
+    name = form_data.name.data,
+    address = form_data.address.data,
+    city = form_data.city.data,
+    state = form_data.state.data,
+    phone = form_data.phone.data, 
+    facebook_link = form_data.facebook_link.data
+    )
 
-  # on successful db insert, flash success
-  flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    # Add and commit new_venue data into venue table in db
+    db.session.add(new_venue)
+    db.session.commit()
+
+    new_venue_id = Venue.query.order_by(Venue.venue_id.desc()).first()
+
+    # Loop to create mutliple add calls to add venue genres to venue_genres table in db
+    # print(venue_genres)
+    # for i in range(0, len(venue_genres)):
+    #   print(venue_genres[i])
+    #   genre_id = Genres.query.get(venue_genres[i]).genre_id
+    #   print(genre_id)
+      # new_venue_genre = VenueGenres(venue_id = new_venue_id.venue_id, genres_id = )
+
+    # on successful db insert, flash success
+    flash('Venue ' + form_data.name.data + ' was successfully listed!')
+  except:
+    error = True
+
+    db.session.rollback()
+
+    flash('An error occurred. Venue ' + form_data.name.data + ' could not be listed.')
+  finally:
+    db.session.close()
+
+  # When creating a new Venue, update venue table then grab new venue_id and update the venue_genres table
+
+
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
