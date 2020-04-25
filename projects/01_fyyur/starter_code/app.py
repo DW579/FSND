@@ -273,32 +273,42 @@ def create_venue_submission():
   # TODO: modify data to be the data object returned from db insertion
   form_data = VenueForm(request.form)
   venue_genres = form_data.genres.data
+  # Query all genres
+  all_genres = Genres.query.all()
+  genres_map = {}
   error = False
+
+  # Map to know the id of each genre. Find SQLAlchemy way to do this
+  for i in range(0, len(all_genres)):
+    genres_map[all_genres[i].name] = i + 1
   
   try:
     # Create new_venue varible to be added to the venue table in db
     new_venue = Venue(
-    name = form_data.name.data,
-    address = form_data.address.data,
-    city = form_data.city.data,
-    state = form_data.state.data,
-    phone = form_data.phone.data, 
-    facebook_link = form_data.facebook_link.data
+      name = form_data.name.data,
+      address = form_data.address.data,
+      city = form_data.city.data,
+      state = form_data.state.data,
+      phone = form_data.phone.data, 
+      facebook_link = form_data.facebook_link.data
     )
 
     # Add and commit new_venue data into venue table in db
     db.session.add(new_venue)
-    db.session.commit()
 
-    new_venue_id = Venue.query.order_by(Venue.venue_id.desc()).first()
+    new_venue_id = Venue.query.order_by(Venue.venue_id.desc()).first().venue_id
 
     # Loop to create mutliple add calls to add venue genres to venue_genres table in db
-    # print(venue_genres)
-    # for i in range(0, len(venue_genres)):
-    #   print(venue_genres[i])
-    #   genre_id = Genres.query.get(venue_genres[i]).genre_id
-    #   print(genre_id)
-      # new_venue_genre = VenueGenres(venue_id = new_venue_id.venue_id, genres_id = )
+    for i in range(0, len(venue_genres)):
+
+      new_venue_genre = VenueGenres(
+        venue_id = new_venue_id,
+        genre_id = genres_map[venue_genres[i]]
+      )
+
+      db.session.add(new_venue_genre)
+
+    db.session.commit()
 
     # on successful db insert, flash success
     flash('Venue "' + form_data.name.data + '" was successfully listed!')
@@ -319,7 +329,7 @@ def create_venue_submission():
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+@app.route('/venues/<venue_id>', methods=['DELETE']) # Almost Done
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
