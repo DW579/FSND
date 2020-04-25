@@ -267,7 +267,7 @@ def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
-@app.route('/venues/create', methods=['POST'])
+@app.route('/venues/create', methods=['POST']) # Done
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
@@ -325,7 +325,7 @@ def create_venue_submission():
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
 
-@app.route('/venues/<venue_id>', methods=['DELETE']) # Almost Done
+@app.route('/venues/<venue_id>', methods=['DELETE']) # Done
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
@@ -522,14 +522,61 @@ def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
-@app.route('/artists/create', methods=['POST'])
+@app.route('/artists/create', methods=['POST']) # Done
 def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
 
+  form_data = ArtistForm(request.form)
+  artist_genres = form_data.genres.data
+  # Query all genres
+  all_genres = Genres.query.all()
+  genres_map = {}
+
+  # Map to know the id of each genre. Find SQLAlchemy way to do this
+  for i in range(0, len(all_genres)):
+    genres_map[all_genres[i].name] = i + 1
+
+  try:
+    # Create new_artist varible to be added to the artist table in db
+    new_artist = Artist(
+      name = form_data.name.data,
+      city = form_data.city.data,
+      state = form_data.state.data,
+      phone = form_data.phone.data, 
+      facebook_link = form_data.facebook_link.data
+    )
+
+    # Add and commit new_artist data into artist table in db
+    db.session.add(new_artist)
+
+    new_artist_id = Artist.query.order_by(Artist.artist_id.desc()).first().artist_id
+
+    # Loop to create mutliple add calls to add venue genres to venue_genres table in db
+    for i in range(0, len(artist_genres)):
+
+      new_artist_genre = ArtistGenres(
+        artist_id = new_artist_id,
+        genre_id = genres_map[artist_genres[i]]
+      )
+
+      db.session.add(new_artist_genre)
+
+    db.session.commit()
+
+    # on successful db insert, flash success
+    flash('Artist "' + form_data.name.data + '" was successfully listed!')
+  except:
+    # Rollback any inserts if an error occurs
+    db.session.rollback()
+
+    flash('An error occurred. Artist "' + form_data.name.data + '" could not be listed.')
+  finally:
+    db.session.close()
+
   # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
+  # flash('Artist ' + request.form['name'] + ' was successfully listed!')
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
   return render_template('pages/home.html')
