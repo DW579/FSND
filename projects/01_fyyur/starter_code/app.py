@@ -338,6 +338,7 @@ def delete_venue(venue_id):
 
     Venue.query.filter_by(venue_id = venue_id).delete()
     VenueGenres.query.filter_by(venue_id = venue_id).delete()
+    Shows.query.filter_by(venue_id = venue_id).delete()
     db.session.commit()
 
     flash('Deleted venue "' + venue_name + '"!')
