@@ -474,10 +474,53 @@ def edit_artist(artist_id):
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
-@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
+@app.route('/artists/<int:artist_id>/edit', methods=['POST']) # Done
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
+
+  form_data = ArtistForm(request.form)
+  artist_genres = form_data.genres.data
+  # Query all genres
+  all_genres = Genres.query.all()
+  genres_map = {}
+
+  # Map to know the id of each genre
+  for i in range(0, len(all_genres)):
+    genres_map[all_genres[i].name] = i + 1
+
+  try:
+    # Update the artist table with name, city, state, and address from edit form
+    Artist.query.get(artist_id).name = form_data.name.data
+    Artist.query.get(artist_id).city = form_data.city.data
+    Artist.query.get(artist_id).state = form_data.state.data
+
+    # Check to see if phone or facebook_link are filled in form to update
+    if form_data.phone.data != "":
+      Artist.query.get(artist_id).phone = form_data.phone.data
+    
+    if form_data.facebook_link.data != "":
+      Artist.query.get(artist_id).facebook_link = form_data.facebook_link.data
+
+    # Delete all genres that are associated with the artist_id
+    ArtistGenres.query.filter_by(artist_id = artist_id).delete()
+
+    # Loop to create mutliple add calls to add venue genres to venue_genres table in db
+    for i in range(0, len(artist_genres)):
+
+      new_artist_genre = ArtistGenres(
+        artist_id = artist_id,
+        genre_id = genres_map[artist_genres[i]]
+      )
+
+      db.session.add(new_artist_genre)
+
+    db.session.commit()
+  except:
+    flash('An error occurred when updating')
+    db.session.rollback()
+  finally:
+    db.session.close()
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -541,8 +584,6 @@ def edit_venue_submission(venue_id):
     db.session.rollback()
   finally:
     db.session.close()
-
-
 
   return redirect(url_for('show_venue', venue_id=venue_id))
 
