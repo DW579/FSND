@@ -277,7 +277,7 @@ def create_venue_submission():
   all_genres = Genres.query.all()
   genres_map = {}
 
-  # Map to know the id of each genre. Find SQLAlchemy way to do this
+  # Map to know the id of each genre
   for i in range(0, len(all_genres)):
     genres_map[all_genres[i].name] = i + 1
   
@@ -463,21 +463,13 @@ def show_artist(artist_id):
 
 #  Update
 #  ----------------------------------------------------------------
-@app.route('/artists/<int:artist_id>/edit', methods=['GET'])
+@app.route('/artists/<int:artist_id>/edit', methods=['GET']) # Done
 def edit_artist(artist_id):
   form = ArtistForm()
+  artist_name = Artist.query.get(artist_id).name
+
   artist={
-    "id": 4,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
-    "facebook_link": "https://www.facebook.com/GunsNPetals",
-    "seeking_venue": True,
-    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+    "name": artist_name
   }
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
@@ -489,30 +481,69 @@ def edit_artist_submission(artist_id):
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
-@app.route('/venues/<int:venue_id>/edit', methods=['GET'])
+@app.route('/venues/<int:venue_id>/edit', methods=['GET']) # Done
 def edit_venue(venue_id):
   form = VenueForm()
+
+  venue_name = Venue.query.get(venue_id).name
+
   venue={
-    "id": 1,
-    "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-    "address": "1015 Folsom Street",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
-    "facebook_link": "https://www.facebook.com/TheMusicalHop",
-    "seeking_talent": True,
-    "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-    "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
+    "name": venue_name
   }
   # TODO: populate form with values from venue with ID <venue_id>
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
-@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
+@app.route('/venues/<int:venue_id>/edit', methods=['POST']) # Done
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+
+  form_data = VenueForm(request.form)
+  venue_genres = form_data.genres.data
+  # Query all genres
+  all_genres = Genres.query.all()
+  genres_map = {}
+
+  # Map to know the id of each genre
+  for i in range(0, len(all_genres)):
+    genres_map[all_genres[i].name] = i + 1
+
+  try:
+    # Update the venue table with name, city, state, and address from edit form
+    Venue.query.get(venue_id).name = form_data.name.data
+    Venue.query.get(venue_id).city = form_data.city.data
+    Venue.query.get(venue_id).state = form_data.state.data
+    Venue.query.get(venue_id).address = form_data.address.data
+
+    # Check to see if phone or facebook_link are filled in form to update
+    if form_data.phone.data != "":
+      Venue.query.get(venue_id).phone = form_data.phone.data
+    
+    if form_data.facebook_link.data != "":
+      Venue.query.get(venue_id).facebook_link = form_data.facebook_link.data
+
+    # Delete all genres that are associated with the venue_id
+    VenueGenres.query.filter_by(venue_id = venue_id).delete()
+
+    # Loop to create mutliple add calls to add venue genres to venue_genres table in db
+    for i in range(0, len(venue_genres)):
+
+      new_venue_genre = VenueGenres(
+        venue_id = venue_id,
+        genre_id = genres_map[venue_genres[i]]
+      )
+
+      db.session.add(new_venue_genre)
+
+    db.session.commit()
+  except:
+    flash('An error occurred when updating')
+    db.session.rollback()
+  finally:
+    db.session.close()
+
+
+
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
