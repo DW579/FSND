@@ -447,8 +447,8 @@ def show_artist(artist_id):
     current_time = datetime.now()
     show = {
         "venue_id": show.venue_id,
-        "venue_name": Artist.query.get(show.venue_id).name,
-        "venue_image_link": Artist.query.get(show.venue_id).image_link,
+        "venue_name": Venue.query.get(show.venue_id).name,
+        "venue_image_link": Venue.query.get(show.venue_id).image_link,
         "start_time": show.start_time
       }
 
